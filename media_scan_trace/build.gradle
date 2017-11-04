@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "de.k3b.android.media.media_scann_trace"
