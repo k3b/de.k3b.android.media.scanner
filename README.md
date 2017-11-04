@@ -1,4 +1,7 @@
-Enhanced media scaner for android-4.0ff 
+Enhanced jpg/exif/iptc/xmp media scaner to update android-4.0-s media database
+
+Goal: extract mediascanner functionality (parse exif/iptc/xmp from jpg/xmp) out of [APhotoManager](https://github.com/k3b/APhotoManager/) into an independant service/package of it-s own
+so that android-s media-db can be kept up to date even if APhotoManager is not installed or running.
 
 ## Features
 
@@ -10,4 +13,7 @@ Enhanced media scaner for android-4.0ff
   * com.android.camera.NEW_PICTURE + content://media/external/...
 
 ## Current Project Status
+
+* MediaScanTraceActivity: early analysis to find out what is happening inside android.
+* no scan logic implemented yet
 
