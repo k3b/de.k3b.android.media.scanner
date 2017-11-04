@@ -1,4 +1,4 @@
-package de.k3b.android.extimagemediascanner;
+package de.k3b.android.media.scanner;
 
 import android.content.Context;
 import android.content.Intent;

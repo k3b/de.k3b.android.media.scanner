@@ -4,7 +4,7 @@ android {
     compileSdkVersion 21
     buildToolsVersion "26.0.1"
     defaultConfig {
-        applicationId "de.k3b.android.extimagemediascanner"
+        applicationId "de.k3b.android.media.media_scann_trace"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1

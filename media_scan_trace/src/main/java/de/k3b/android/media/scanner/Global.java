@@ -1,4 +1,4 @@
-package de.k3b.android.extimagemediascanner;
+package de.k3b.android.media.scanner;
 
 /**
  * Created by EVE on 03.11.2017.

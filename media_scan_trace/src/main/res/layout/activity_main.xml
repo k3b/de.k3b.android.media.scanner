@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/root_view"
-    tools:context="de.k3b.android.extimagemediascanner.MainActivity">
+    tools:context="de.k3b.android.scanner.MediaScanTraceActivity">
 
     <TextView
         android:id="@+id/text1"

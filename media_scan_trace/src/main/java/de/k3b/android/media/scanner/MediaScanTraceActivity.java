@@ -1,4 +1,4 @@
-package de.k3b.android.extimagemediascanner;
+package de.k3b.android.media.scanner;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,10 +9,10 @@ import android.widget.TextView;
 
 import java.io.File;
 
-public class MainActivity extends Activity {
+public class MediaScanTraceActivity extends Activity {
     private static final String SETTINGS_KEY = "Test-";
 
-    private static MainActivity instance = null;
+    private static MediaScanTraceActivity instance = null;
     private TextView log = null;
 
     @Override
@@ -28,17 +28,23 @@ public class MainActivity extends Activity {
 
         instance = this;
 
-        Intent scanTestIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.fromFile(new File("/does/not/exist.jpg")));
-        Log.i(Global.TAG,"sendBroadcast " + scanTestIntent);
-        this.sendBroadcast(scanTestIntent);
+        selfTest();
+    }
 
-        scanTestIntent = new Intent("de.k3b.test.MEDIA_SCANNER_SCAN_FILE",
-                Uri.fromFile(new File("/does/not/exist.jpg")));
-        Log.i(Global.TAG,"sendBroadcast " + scanTestIntent);
+    private void selfTest() {
+        final Intent scanTestIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.fromFile(new File("/does/not/exist/test.jpg")));
+        final String debugMessage = "onCreate-selfTest-sendBroadcast ";
+        Log.i(Global.TAG, debugMessage + scanTestIntent);
+        showEvent(debugMessage, scanTestIntent);
         this.sendBroadcast(scanTestIntent);
     }
 
+    @Override
+    protected void onResume() {
+        instance = this;
+        super.onResume();
+    }
     @Override
     protected void onDestroy() {
         instance = null;
@@ -47,13 +53,13 @@ public class MainActivity extends Activity {
 
     public static void onMediaEvent(Intent intent) {
         if (instance != null) {
-            instance.showEvent(intent);
+            instance.showEvent("onReceive", intent);
         }
     }
 
-    private void showEvent(Intent intent) {
+    private void showEvent(String dbgContext, Intent intent) {
         if (intent != null) {
-            log.append(MediaScannerTools.getText(this, intent));
+            log.append(dbgContext + "\n\t" + MediaScannerTools.getText(this, intent));
         }
     }
 

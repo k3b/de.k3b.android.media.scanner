@@ -1,15 +1,10 @@
-package de.k3b.android.extimagemediascanner;
+package de.k3b.android.media.scanner;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.io.File;
 
 public class ScannerReceiver extends BroadcastReceiver {
 
@@ -18,6 +13,6 @@ public class ScannerReceiver extends BroadcastReceiver {
         final String message = intent + "\n\t" + MediaScannerTools.getText(context, intent);
         Log.i(Global.TAG, "onReceive " + message);
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        MainActivity.onMediaEvent(intent);
+        MediaScanTraceActivity.onMediaEvent(intent);
     }
 }

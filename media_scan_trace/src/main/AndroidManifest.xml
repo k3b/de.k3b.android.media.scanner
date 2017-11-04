@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="de.k3b.android.extimagemediascanner"
+    package="de.k3b.android.media.scanner"
     android:installLocation="auto">
 
     <uses-feature
@@ -17,8 +17,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity android:name="de.k3b.android.media.scanner.MediaScanTraceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <receiver
-            android:name=".ScannerReceiver"
+            android:name="de.k3b.android.media.scanner.ScannerReceiver"
             android:enabled="true"
             android:exported="true">
 
@@ -27,23 +36,21 @@
                 <action android:name="android.intent.action_MEDIA_SCANNER_STARTED" />
                 <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
                 <action android:name="android.intent.action.MEDIA_SCANNER_SCAN_FILE" />
-                <action android:name="de.k3b.test.MEDIA_SCANNER_SCAN_FILE" />
-
                 <data android:scheme="file" />
                 <data android:scheme="content" />
             </intent-filter>
 
-            <!-- if called with mime  -->
+            <!-- if called with mime. probably not necessary
             <intent-filter android:priority="10">
                 <action android:name="android.intent.action_MEDIA_SCANNER_STARTED" />
                 <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED" />
                 <action android:name="android.intent.action.MEDIA_SCANNER_SCAN_FILE" />
-                <action android:name="de.k3b.test.MEDIA_SCANNER_SCAN_FILE" />
 
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
             </intent-filter>
+            -->
 
             <!-- not working
                 <intent-filter android:priority="10">
@@ -53,6 +60,9 @@
                     <action android:name="de.k3b.test.MEDIA_SCANNER_SCAN_FILE" />
                 </intent-filter>
             -->
+
+            <!-- on old android versions (i.e. androids-4.4, 4.2 ) info that camera has taken
+                a new photo, after beeing added to media-db  -->
             <intent-filter android:priority="10">
                 <action android:name="android.hardware.action.NEW_PICTURE" />
                 <action android:name="com.android.camera.NEW_PICTURE" />
@@ -63,13 +73,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
