@@ -42,14 +42,11 @@ public class MediaScanTraceActivity extends Activity {
     private static final String NEWLINE = "\n";
     private static final String NEWLINE_TAB = NEWLINE + "\t";
 
-    public static Uri SQL_TABLE_EXTERNAL_CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-    public static Uri SQL_TABLE_EXTERNAL_CONTENT_URI_FILE = MediaStore.Files.getContentUri("external");
-
     // iso: "yyyy-MM-dd'T'HH:mm:ss"
     private static final DateFormat MessageTimeStampDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ROOT);
 
-    /** used for static {@link #showEventInGui(Intent)} to forwad to current visible gui  */
-    private static MediaScanTraceActivity currentVisibleInstance = null;
+    /** used for static {@link #showEventInGui(String, Intent)} to forwad to current visible gui  */
+    public static MediaScanTraceActivity currentVisibleInstance = null;
 
     private TextView messages = null;
 
@@ -63,12 +60,12 @@ public class MediaScanTraceActivity extends Activity {
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
 
-            addMessage("ContentObserver: ", "self=" + selfChange +
+            addMessage("Activity ContentObserver: ", "self=" + selfChange +
                     "; " + uri);
         }
     };
 
-    private final ScannerReceiver mScanListener = new ScannerReceiver();
+    // private final ScannerReceiver mScanListener = new ScannerReceiver("Activity");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +85,10 @@ public class MediaScanTraceActivity extends Activity {
 
             selfTest();
         }
-        this.getContentResolver().registerContentObserver(SQL_TABLE_EXTERNAL_CONTENT_URI, true, mMediaObserverDirectory);
-        this.getContentResolver().registerContentObserver(SQL_TABLE_EXTERNAL_CONTENT_URI_FILE, true, mMediaObserverDirectory);
+        this.getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, mMediaObserverDirectory);
+        this.getContentResolver().registerContentObserver(MediaStore.Files.getContentUri("external"), true, mMediaObserverDirectory);
 
+        /*
         IntentFilter f = new IntentFilter();
         f.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
         f.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
@@ -98,7 +96,7 @@ public class MediaScanTraceActivity extends Activity {
         f.addDataScheme("file");
         f.addDataScheme("content");
         registerReceiver(mScanListener, f);
-
+        */
 
     }
 
@@ -122,16 +120,16 @@ public class MediaScanTraceActivity extends Activity {
         currentVisibleInstance = null;
         super.onDestroy();
 
-        unregisterReceiver(mScanListener);
+        // unregisterReceiver(mScanListener);
 
         this.getContentResolver().unregisterContentObserver(mMediaObserverDirectory);
     }
 
     /** called by broadcastReceiver {@link ScannerReceiver} to monitor reived events. */
-    public static void showEventInGui(Intent broadcastIntent) {
+    public static void showEventInCurrentGui(String dbgContext, Intent broadcastIntent) {
         if (currentVisibleInstance != null) {
             // if gui is available
-            currentVisibleInstance.showEventInGui("onReceive", broadcastIntent);
+            currentVisibleInstance.showEventInGui(dbgContext + "-onReceive", broadcastIntent);
         }
     }
 
@@ -142,8 +140,8 @@ public class MediaScanTraceActivity extends Activity {
         }
     }
 
-    private void addMessage(String dbgContext, String message) {
-        messages.append(MessageTimeStampDateFormat.format(new Date()) + " "
+    public void addMessage(String dbgContext, String message) {
+        messages.append(MessageTimeStampDateFormat.format(new Date()) + " in activity  "
                 + dbgContext + NEWLINE_TAB
                 + message + NEWLINE);
     }

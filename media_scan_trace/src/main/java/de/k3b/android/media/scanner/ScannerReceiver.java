@@ -27,14 +27,25 @@ import android.widget.Toast;
 /** receives and processes media scanner related Broadcasts */
 public class ScannerReceiver extends BroadcastReceiver {
 
+    private final String name;
+
+    public ScannerReceiver() {
+        this("Auto");
+    }
+
+    public ScannerReceiver(String name) {
+
+        this.name = name;
+    }
+
     @Override
     public void onReceive(Context context, Intent broadcastIntent) {
-        final String message = broadcastIntent + "\n\t" + MediaScannerTools.formatLogMessage(context, broadcastIntent);
+        final String message = name + ":" + broadcastIntent + "\n\t" + MediaScannerTools.formatLogMessage(context, broadcastIntent);
         Log.i(Global.TAG, "onReceive " + message);
 
         if (Global.showToasts) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
-        MediaScanTraceActivity.showEventInGui(broadcastIntent);
+        MediaScanTraceActivity.showEventInCurrentGui(name, broadcastIntent);
     }
 }
