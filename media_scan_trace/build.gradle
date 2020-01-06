@@ -1,27 +1,66 @@
 apply plugin: 'com.android.application'
+apply plugin: 'maven'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "26.0.1"
+    // appXXX are defined in gradle.properties
+    compileSdkVersion = 23
+    buildToolsVersion = '28.0.3' // apm
+	// buildToolsVersion "26.0.1" // org
+
     defaultConfig {
         applicationId "de.k3b.android.media.media_scann_trace"
-        minSdkVersion 14
+        minSdkVersion 14		// Android 4.0 Ice Cream Sandwich (API 14); Android 4.4 KitKat (API 19);  Android 5.0 Lollipop (API 21);
+        // Android 6.0 Marshmallow (API 23); Android 7.0 Nougat (API 24)
         targetSdkVersion 21
+
         versionCode 1
         versionName "1.0"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
     buildTypes {
-        release {
+        debug {
+            // shrinkResources true
+            // minifyEnabled true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
+    productFlavors {
+    }
+
+    lintOptions {
+        disable 'MissingTranslation','ValidFragment', 'ContentDescription', 'ExpiredTargetSdkVersion'
+
+        abortOnError false
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    // testImplementation 'junit:junit:4.11'
+    // testImplementation 'org.slf4j:slf4j-api:1.7.7@jar'
+    // testImplementation 'org.slf4j:slf4j-simple:1.7.7'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // for view-pager
+    // implementation 'com.android.support:support-v4:21.0.2'
+    // implementation 'com.android.support:support-v4:23.1.1'
+    // implementation 'com.android.support:support-v4:21.0.2'
+    // implementation 'com.android.support:appcompat-v7:21.0.2'
+
+    // implementation 'org.slf4j:slf4j-api:1.7.7@jar'
+    // implementation 'eu.lp0.slf4j:slf4j-android:1.7.7-1@jar'
+
+    // testImplementation('org.powermock:powermock-api-mockito:1.5.2')
+    // testImplementation('org.powermock:powermock-module-junit4:1.5.2')
 }

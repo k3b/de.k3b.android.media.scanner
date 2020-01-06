@@ -2,19 +2,20 @@
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        // classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.android.tools.build:gradle:2.3.1'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // see https://jcenter.bintray.com/com/android/tools/build/gradle/
+        // classpath 'com.android.tools.build:gradle:3.2.1'
+        //classpath 'com.android.tools.build:gradle:2.3.1' // org
+        classpath 'com.android.tools.build:gradle:3.4.1' // apm
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
 }
@@ -22,3 +23,6 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// download and generate gradlew which is not part of this repository and is required by travis
+

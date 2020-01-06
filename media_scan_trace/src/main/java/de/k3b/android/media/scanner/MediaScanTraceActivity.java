@@ -20,8 +20,11 @@ package de.k3b.android.media.scanner;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -36,6 +39,12 @@ import java.util.Locale;
 public class MediaScanTraceActivity extends Activity {
     private static final String SETTINGS_KEY = "Test-";
 
+    private static final String NEWLINE = "\n";
+    private static final String NEWLINE_TAB = NEWLINE + "\t";
+
+    public static Uri SQL_TABLE_EXTERNAL_CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    public static Uri SQL_TABLE_EXTERNAL_CONTENT_URI_FILE = MediaStore.Files.getContentUri("external");
+
     // iso: "yyyy-MM-dd'T'HH:mm:ss"
     private static final DateFormat MessageTimeStampDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ROOT);
 
@@ -43,6 +52,23 @@ public class MediaScanTraceActivity extends Activity {
     private static MediaScanTraceActivity currentVisibleInstance = null;
 
     private TextView messages = null;
+
+    /**
+     * after media db change cached Directories must be recalculated
+     */
+    private final ContentObserver mMediaObserverDirectory = new ContentObserver(null) {
+
+        // ignore version with 3rd param: int userId
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+
+            addMessage("ContentObserver: ", "self=" + selfChange +
+                    "; " + uri);
+        }
+    };
+
+    private final ScannerReceiver mScanListener = new ScannerReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +88,18 @@ public class MediaScanTraceActivity extends Activity {
 
             selfTest();
         }
+        this.getContentResolver().registerContentObserver(SQL_TABLE_EXTERNAL_CONTENT_URI, true, mMediaObserverDirectory);
+        this.getContentResolver().registerContentObserver(SQL_TABLE_EXTERNAL_CONTENT_URI_FILE, true, mMediaObserverDirectory);
+
+        IntentFilter f = new IntentFilter();
+        f.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+        f.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+        f.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        f.addDataScheme("file");
+        f.addDataScheme("content");
+        registerReceiver(mScanListener, f);
+
+
     }
 
     /** to check that ACTION_MEDIA_SCANNER_SCAN_FILE really can be received */
@@ -83,6 +121,10 @@ public class MediaScanTraceActivity extends Activity {
     protected void onDestroy() {
         currentVisibleInstance = null;
         super.onDestroy();
+
+        unregisterReceiver(mScanListener);
+
+        this.getContentResolver().unregisterContentObserver(mMediaObserverDirectory);
     }
 
     /** called by broadcastReceiver {@link ScannerReceiver} to monitor reived events. */
@@ -95,10 +137,15 @@ public class MediaScanTraceActivity extends Activity {
 
     private void showEventInGui(String dbgContext, Intent broadcastIntent) {
         if (broadcastIntent != null) {
-            messages.append(MessageTimeStampDateFormat.format(new Date()) + " "
-                    + dbgContext + "\n\t"
-                    + MediaScannerTools.formatLogMessage(this, broadcastIntent));
+            final String message = MediaScannerTools.formatLogMessage(this, broadcastIntent);
+            addMessage(dbgContext, message);
         }
+    }
+
+    private void addMessage(String dbgContext, String message) {
+        messages.append(MessageTimeStampDateFormat.format(new Date()) + " "
+                + dbgContext + NEWLINE_TAB
+                + message + NEWLINE);
     }
 
     @Override
